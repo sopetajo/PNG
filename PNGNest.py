@@ -40,8 +40,6 @@ n = len(p)
 # Creating the PNG file as a black square:
 imageio.imwrite('pld.png', np.zeros((110,110,3)))
 img = imageio.imread('pld.png')
-imageio.imwrite('pld.png', img)
-img = imageio.imread('pld.png')
 
 
 # Inserting the payload in the image:
